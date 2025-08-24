@@ -411,6 +411,47 @@
             width: 18px;
             height: 18px;
         }
+        
+        /* PDF specific styles */
+        .pdf-mode {
+            padding: 40px;
+            background: white;
+            box-sizing: border-box;
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+        }
+        
+        .pdf-mode .markdown-preview {
+            border: none;
+            padding: 0;
+            min-height: auto;
+        }
+        
+        .pdf-mode h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .pdf-mode h2 {
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .pdf-mode pre {
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        .pdf-mode table {
+            page-break-inside: avoid;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -565,6 +606,9 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
         <p>Dibuat dengan ❤️ | Generator README.md ke PDF &copy; 2023</p>
     </footer>
 
+    <!-- Container untuk PDF (tersembunyi) -->
+    <div id="pdf-container" style="position: absolute; left: -9999px; top: -9999px; width: 210mm; background: white;"></div>
+
     <script>
         // Inisialisasi
         const { jsPDF } = window.jspdf;
@@ -575,6 +619,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
         const sampleDataBtn = document.getElementById('sample-data');
         const notification = document.getElementById('notification');
         const resetColorsBtn = document.getElementById('reset-colors');
+        const pdfContainer = document.getElementById('pdf-container');
         
         // Elemen input warna
         const primaryColorInput = document.getElementById('primary-color');
@@ -668,30 +713,61 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             generatePdfBtn.disabled = true;
             
             try {
-                // Simpan warna asli
-                const originalColors = {
-                    primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
-                    headerBg: getComputedStyle(document.documentElement).getPropertyValue('--header-bg'),
-                    codeBg: getComputedStyle(document.documentElement).getPropertyValue('--code-bg'),
-                    codeText: getComputedStyle(document.documentElement).getPropertyValue('--code-text'),
-                    link: getComputedStyle(document.documentElement).getPropertyValue('--link-color')
-                };
+                // Buat elemen khusus untuk PDF dengan padding
+                const pdfContent = document.createElement('div');
+                pdfContent.className = 'pdf-mode';
                 
-                // Optimalkan warna untuk PDF
-                document.documentElement.style.setProperty('--primary-color', '#4a6cf7');
-                document.documentElement.style.setProperty('--header-bg', '#4a6cf7');
-                document.documentElement.style.setProperty('--code-bg', '#1f2937');
-                document.documentElement.style.setProperty('--code-text', '#f9fafb');
-                document.documentElement.style.setProperty('--link-color', '#3b82f6');
+                // Salinan konten pratinjau
+                const previewClone = markdownPreview.cloneNode(true);
                 
-                // Render ulang dengan warna yang dioptimalkan
-                renderMarkdown();
+                // Terapkan warna yang dipilih ke konten PDF
+                const style = document.createElement('style');
+                style.textContent = `
+                    .pdf-mode { 
+                        padding: 40px; 
+                        background: white; 
+                        box-sizing: border-box; 
+                        width: 210mm; 
+                    }
+                    .pdf-mode h1 { 
+                        color: ${getComputedStyle(document.documentElement).getPropertyValue('--text-color')};
+                        font-size: 28px;
+                        margin-bottom: 20px;
+                        border-bottom: 2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--border-color')};
+                    }
+                    .pdf-mode h2 { 
+                        color: ${primaryColorInput.value};
+                        font-size: 22px;
+                        margin-top: 30px;
+                        margin-bottom: 15px;
+                    }
+                    .pdf-mode pre { 
+                        background: ${codeBgInput.value};
+                        color: ${codeTextInput.value};
+                        padding: 16px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        page-break-inside: avoid;
+                    }
+                    .pdf-mode a { 
+                        color: ${linkColorInput.value};
+                    }
+                    .pdf-mode blockquote { 
+                        border-left: 4px solid ${primaryColorInput.value};
+                        color: ${getComputedStyle(document.documentElement).getPropertyValue('--secondary-color')};
+                    }
+                `;
+                
+                pdfContent.appendChild(style);
+                pdfContent.appendChild(previewClone);
+                pdfContainer.innerHTML = '';
+                pdfContainer.appendChild(pdfContent);
                 
                 // Tunggu sebentar untuk render
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 // Menggunakan html2canvas untuk menangkap konten sebagai gambar
-                const canvas = await html2canvas(markdownPreview, {
+                const canvas = await html2canvas(pdfContent, {
                     scale: 2,
                     useCORS: true,
                     logging: false,
@@ -700,32 +776,27 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 190; // Lebar gambar dalam mm (A4: 210mm width)
-                const pageHeight = 297; // Tinggi halaman A4 dalam mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 10;
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = pageWidth - 40; // Padding 20mm di kiri dan kanan
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                let heightLeft = imgHeight;
+                let position = 20; // Padding atas 20mm
+                let page = 1;
+                
+                // Halaman pertama
+                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
                 
                 // Tambahkan halaman baru jika kontennya panjang
                 while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight + 10;
+                    position = heightLeft - imgHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
+                    page++;
                 }
-                
-                // Kembalikan warna asli
-                document.documentElement.style.setProperty('--primary-color', originalColors.primary);
-                document.documentElement.style.setProperty('--header-bg', originalColors.headerBg);
-                document.documentElement.style.setProperty('--code-bg', originalColors.codeBg);
-                document.documentElement.style.setProperty('--code-text', originalColors.codeText);
-                document.documentElement.style.setProperty('--link-color', originalColors.link);
-                
-                // Render ulang dengan warna asli
-                renderMarkdown();
                 
                 // Unduh PDF
                 pdf.save('README.pdf');
@@ -825,4 +896,4 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
 </body>
 </html>
 
-Anda dapat menyimpan kode di atas sebagai file HTML (misalnya index.html) dan membukanya langsung di browser untuk mulai menggunakan aplikasi.
+Aplikasi ini sekarang menghasilkan PDF dengan kualitas yang lebih baik, dengan warna yang sesuai pilihan Anda dan layout yang lebih rapi berkat padding yang telah ditambahkan.
