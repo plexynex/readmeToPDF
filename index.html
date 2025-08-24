@@ -414,7 +414,7 @@
         
         /* PDF specific styles */
         .pdf-mode {
-            padding: 30px;
+            padding: 40px;
             background: white;
             box-sizing: border-box;
             width: 210mm; /* A4 width */
@@ -455,9 +455,8 @@
         
         .page-number {
             position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
+            bottom: 20px;
+            width: 100%;
             text-align: center;
             color: #666;
             font-size: 12px;
@@ -716,14 +715,14 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             updateColors();
         });
         
-        // Fungsi untuk menghasilkan PDF dengan layout yang benar
+        // Fungsi untuk menghasilkan PDF dengan nomor halaman
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
             generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
             generatePdfBtn.disabled = true;
             
             try {
-                // Buat elemen khusus untuk PDF dengan padding yang benar
+                // Buat elemen khusus untuk PDF dengan padding
                 const pdfContent = document.createElement('div');
                 pdfContent.className = 'pdf-mode';
                 
@@ -734,10 +733,12 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const style = document.createElement('style');
                 style.textContent = `
                     .pdf-mode { 
-                        padding: 30px; 
+                        padding: 40px; 
                         background: white; 
                         box-sizing: border-box; 
                         width: 210mm; 
+                        min-height: 297mm;
+                        position: relative;
                     }
                     .pdf-mode h1 { 
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--text-color')};
@@ -768,39 +769,29 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                     }
                     .page-number {
                         position: absolute;
-                        bottom: 15px;
-                        left: 0;
-                        right: 0;
+                        bottom: 20px;
+                        width: calc(100% - 80px);
                         text-align: center;
                         color: #666;
                         font-size: 12px;
+                        padding-top: 20px;
                     }
                 `;
                 
                 pdfContent.appendChild(style);
                 pdfContent.appendChild(previewClone);
+                
+                // Tambahkan area untuk nomor halaman
+                const pageNumber = document.createElement('div');
+                pageNumber.className = 'page-number';
+                pageNumber.innerHTML = 'Halaman 1';
+                pdfContent.appendChild(pageNumber);
+                
                 pdfContainer.innerHTML = '';
                 pdfContainer.appendChild(pdfContent);
                 
                 // Tunggu sebentar untuk render
                 await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Buat PDF dengan padding yang benar di setiap halaman
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Padding untuk setiap halaman
-                const padding = {
-                    top: 25,
-                    right: 25,
-                    bottom: 25,
-                    left: 25
-                };
-                
-                // Area konten yang dapat digunakan
-                const contentWidth = pageWidth - padding.left - padding.right;
-                const contentHeight = pageHeight - padding.top - padding.bottom;
                 
                 // Menggunakan html2canvas untuk menangkap konten sebagai gambar
                 const canvas = await html2canvas(pdfContent, {
@@ -811,38 +802,66 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 });
                 
                 const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Hitung dimensi gambar dengan padding
+                const padding = {
+                    top: 20,
+                    right: 20,
+                    bottom: 30, // Extra space untuk nomor halaman
+                    left: 20
+                };
+                
+                const contentWidth = pageWidth - padding.left - padding.right;
+                const contentHeight = pageHeight - padding.top - padding.bottom;
+                
                 const imgWidth = contentWidth;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                let heightLeft = imgHeight;
-                let position = 0;
-                let page = 1;
+                let currentHeight = 0;
+                let pageNumberCount = 1;
                 
-                // Tambahkan halaman pertama dengan padding
-                pdf.addImage(imgData, 'PNG', padding.left, padding.top, imgWidth, imgHeight);
-                
-                // Tambahkan nomor halaman pertama
-                pdf.setFontSize(10);
-                pdf.setTextColor(100);
-                pdf.text(`Halaman ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                
-                heightLeft -= contentHeight;
-                
-                // Tambahkan halaman baru jika kontennya panjang
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight + contentHeight;
-                    pdf.addPage();
+                // Fungsi untuk menambahkan halaman dengan nomor
+                const addPageWithNumber = (imgHeight, isFirstPage = false) => {
+                    if (!isFirstPage) {
+                        pdf.addPage();
+                        pageNumberCount++;
+                    }
                     
-                    // Tambahkan konten dengan padding yang benar
-                    pdf.addImage(imgData, 'PNG', padding.left, padding.top - position, imgWidth, imgHeight);
+                    // Hitung posisi Y untuk konten
+                    const yPos = padding.top;
+                    
+                    // Tambahkan gambar ke PDF
+                    pdf.addImage(
+                        imgData, 
+                        'PNG', 
+                        padding.left, 
+                        yPos - (currentHeight * (isFirstPage ? 0 : 1)),
+                        imgWidth, 
+                        imgHeight
+                    );
                     
                     // Tambahkan nomor halaman
-                    page++;
                     pdf.setFontSize(10);
                     pdf.setTextColor(100);
-                    pdf.text(`Halaman ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                    
-                    heightLeft -= contentHeight;
+                    pdf.text(
+                        `Halaman ${pageNumberCount}`,
+                        pageWidth / 2,
+                        pageHeight - 10,
+                        { align: 'center' }
+                    );
+                };
+                
+                // Halaman pertama
+                addPageWithNumber(imgHeight, true);
+                currentHeight += contentHeight;
+                
+                // Tambahkan halaman baru jika kontennya panjang
+                while (currentHeight < imgHeight) {
+                    addPageWithNumber(imgHeight - currentHeight);
+                    currentHeight += contentHeight;
                 }
                 
                 // Unduh PDF
@@ -942,5 +961,3 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
     </script>
 </body>
 </html>
-
-Dengan perbaikan ini, PDF yang dihasilkan akan memiliki tampilan yang lebih profesional dengan padding yang konsisten di setiap halaman dan nomor halaman yang membantu navigasi dokumen.
