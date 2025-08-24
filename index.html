@@ -414,7 +414,7 @@
         
         /* PDF specific styles */
         .pdf-mode {
-            padding: 40px;
+            padding: 30px;
             background: white;
             box-sizing: border-box;
             width: 210mm; /* A4 width */
@@ -451,6 +451,16 @@
         .pdf-mode table {
             page-break-inside: avoid;
             margin: 20px 0;
+        }
+        
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -706,14 +716,14 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             updateColors();
         });
         
-        // Fungsi untuk menghasilkan PDF
+        // Fungsi untuk menghasilkan PDF dengan layout yang benar
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
             generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
             generatePdfBtn.disabled = true;
             
             try {
-                // Buat elemen khusus untuk PDF dengan padding
+                // Buat elemen khusus untuk PDF dengan padding yang benar
                 const pdfContent = document.createElement('div');
                 pdfContent.className = 'pdf-mode';
                 
@@ -724,7 +734,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const style = document.createElement('style');
                 style.textContent = `
                     .pdf-mode { 
-                        padding: 40px; 
+                        padding: 30px; 
                         background: white; 
                         box-sizing: border-box; 
                         width: 210mm; 
@@ -756,6 +766,15 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                         border-left: 4px solid ${primaryColorInput.value};
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--secondary-color')};
                     }
+                    .page-number {
+                        position: absolute;
+                        bottom: 15px;
+                        left: 0;
+                        right: 0;
+                        text-align: center;
+                        color: #666;
+                        font-size: 12px;
+                    }
                 `;
                 
                 pdfContent.appendChild(style);
@@ -766,6 +785,23 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 // Tunggu sebentar untuk render
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
+                // Buat PDF dengan padding yang benar di setiap halaman
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Padding untuk setiap halaman
+                const padding = {
+                    top: 25,
+                    right: 25,
+                    bottom: 25,
+                    left: 25
+                };
+                
+                // Area konten yang dapat digunakan
+                const contentWidth = pageWidth - padding.left - padding.right;
+                const contentHeight = pageHeight - padding.top - padding.bottom;
+                
                 // Menggunakan html2canvas untuk menangkap konten sebagai gambar
                 const canvas = await html2canvas(pdfContent, {
                     scale: 2,
@@ -775,27 +811,38 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 });
                 
                 const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = pageWidth - 40; // Padding 20mm di kiri dan kanan
+                const imgWidth = contentWidth;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
                 let heightLeft = imgHeight;
-                let position = 20; // Padding atas 20mm
+                let position = 0;
                 let page = 1;
                 
-                // Halaman pertama
-                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                // Tambahkan halaman pertama dengan padding
+                pdf.addImage(imgData, 'PNG', padding.left, padding.top, imgWidth, imgHeight);
+                
+                // Tambahkan nomor halaman pertama
+                pdf.setFontSize(10);
+                pdf.setTextColor(100);
+                pdf.text(`Halaman ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                
+                heightLeft -= contentHeight;
                 
                 // Tambahkan halaman baru jika kontennya panjang
                 while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
+                    position = heightLeft - imgHeight + contentHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                    
+                    // Tambahkan konten dengan padding yang benar
+                    pdf.addImage(imgData, 'PNG', padding.left, padding.top - position, imgWidth, imgHeight);
+                    
+                    // Tambahkan nomor halaman
                     page++;
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100);
+                    pdf.text(`Halaman ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                    
+                    heightLeft -= contentHeight;
                 }
                 
                 // Unduh PDF
@@ -896,4 +943,4 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
 </body>
 </html>
 
-Aplikasi ini sekarang menghasilkan PDF dengan kualitas yang lebih baik, dengan warna yang sesuai pilihan Anda dan layout yang lebih rapi berkat padding yang telah ditambahkan.
+Dengan perbaikan ini, PDF yang dihasilkan akan memiliki tampilan yang lebih profesional dengan padding yang konsisten di setiap halaman dan nomor halaman yang membantu navigasi dokumen.
