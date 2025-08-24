@@ -414,7 +414,7 @@
         
         /* PDF specific styles */
         .pdf-mode {
-            padding: 40px;
+            padding: 30px;
             background: white;
             box-sizing: border-box;
             width: 210mm; /* A4 width */
@@ -430,12 +430,15 @@
         .pdf-mode h1 {
             font-size: 28px;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
         }
         
         .pdf-mode h2 {
             font-size: 22px;
             margin-top: 30px;
             margin-bottom: 15px;
+            color: #4a6cf7;
         }
         
         .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
@@ -446,20 +449,38 @@
         .pdf-mode pre {
             margin: 20px 0;
             page-break-inside: avoid;
+            background: #1f2937;
+            padding: 16px;
+            border-radius: 8px;
         }
         
         .pdf-mode table {
             page-break-inside: avoid;
             margin: 20px 0;
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .page-number {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            color: #666;
-            font-size: 12px;
+        .pdf-mode th, .pdf-mode td {
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        .pdf-mode th {
+            background-color: #f3f4f6;
+        }
+        
+        .pdf-mode a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        .pdf-mode blockquote {
+            border-left: 4px solid #4a6cf7;
+            padding-left: 16px;
+            margin-left: 0;
+            color: #6b7280;
         }
     </style>
 </head>
@@ -467,7 +488,7 @@
     <div class="container">
         <header>
             <h1>Generator Tampilan README.md</h1>
-            <p class="description">Masukkan kode Markdown Anda, lihat pratinjau secara real-time, kustomisasi warna, dan unduh sebagai PDF dengan satu klik</p>
+            <p class="description">Masukkan kode Markdown Anda, lihat pratinjau secara real-time, kustomisasi warna, dan unduh sebagai PDF dengan margin yang rapi</p>
         </header>
         
         <div class="main-content">
@@ -487,7 +508,7 @@ Ini adalah contoh proyek untuk menunjukkan generator README. Aplikasi ini memung
 - ✨ Editor Markdown dengan highlight sintaks
 - 👁️ Pratinjau real-time
 - 🎨 Kustomisasi warna tema
-- 📁 Ekspor ke PDF
+- 📁 Ekspor ke PDF dengan margin yang rapi
 - 🎯 Tampilan yang responsif dan modern
 
 ## Instalasi
@@ -715,14 +736,14 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             updateColors();
         });
         
-        // Fungsi untuk menghasilkan PDF dengan nomor halaman
+        // Fungsi untuk menghasilkan PDF dengan margin dan padding yang rapi
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
             generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
             generatePdfBtn.disabled = true;
             
             try {
-                // Buat elemen khusus untuk PDF dengan padding
+                // Buat elemen khusus untuk PDF dengan margin dan padding
                 const pdfContent = document.createElement('div');
                 pdfContent.className = 'pdf-mode';
                 
@@ -733,17 +754,16 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const style = document.createElement('style');
                 style.textContent = `
                     .pdf-mode { 
-                        padding: 40px; 
+                        padding: 30px; 
                         background: white; 
                         box-sizing: border-box; 
                         width: 210mm; 
-                        min-height: 297mm;
-                        position: relative;
                     }
                     .pdf-mode h1 { 
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--text-color')};
                         font-size: 28px;
                         margin-bottom: 20px;
+                        padding-bottom: 10px;
                         border-bottom: 2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--border-color')};
                     }
                     .pdf-mode h2 { 
@@ -767,26 +787,16 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                         border-left: 4px solid ${primaryColorInput.value};
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--secondary-color')};
                     }
-                    .page-number {
-                        position: absolute;
-                        bottom: 20px;
-                        width: calc(100% - 80px);
-                        text-align: center;
-                        color: #666;
-                        font-size: 12px;
-                        padding-top: 20px;
+                    .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
+                        margin-bottom: 15px;
+                    }
+                    .pdf-mode table {
+                        margin: 20px 0;
                     }
                 `;
                 
                 pdfContent.appendChild(style);
                 pdfContent.appendChild(previewClone);
-                
-                // Tambahkan area untuk nomor halaman
-                const pageNumber = document.createElement('div');
-                pageNumber.className = 'page-number';
-                pageNumber.innerHTML = 'Halaman 1';
-                pdfContent.appendChild(pageNumber);
-                
                 pdfContainer.innerHTML = '';
                 pdfContainer.appendChild(pdfContent);
                 
@@ -806,62 +816,32 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 
-                // Hitung dimensi gambar dengan padding
-                const padding = {
+                // Margin untuk setiap halaman
+                const margin = {
                     top: 20,
                     right: 20,
-                    bottom: 30, // Extra space untuk nomor halaman
+                    bottom: 20,
                     left: 20
                 };
                 
-                const contentWidth = pageWidth - padding.left - padding.right;
-                const contentHeight = pageHeight - padding.top - padding.bottom;
-                
-                const imgWidth = contentWidth;
+                const imgWidth = pageWidth - margin.left - margin.right;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                let currentHeight = 0;
-                let pageNumberCount = 1;
-                
-                // Fungsi untuk menambahkan halaman dengan nomor
-                const addPageWithNumber = (imgHeight, isFirstPage = false) => {
-                    if (!isFirstPage) {
-                        pdf.addPage();
-                        pageNumberCount++;
-                    }
-                    
-                    // Hitung posisi Y untuk konten
-                    const yPos = padding.top;
-                    
-                    // Tambahkan gambar ke PDF
-                    pdf.addImage(
-                        imgData, 
-                        'PNG', 
-                        padding.left, 
-                        yPos - (currentHeight * (isFirstPage ? 0 : 1)),
-                        imgWidth, 
-                        imgHeight
-                    );
-                    
-                    // Tambahkan nomor halaman
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(100);
-                    pdf.text(
-                        `Halaman ${pageNumberCount}`,
-                        pageWidth / 2,
-                        pageHeight - 10,
-                        { align: 'center' }
-                    );
-                };
+                let heightLeft = imgHeight;
+                let position = margin.top;
+                let page = 1;
                 
                 // Halaman pertama
-                addPageWithNumber(imgHeight, true);
-                currentHeight += contentHeight;
+                pdf.addImage(imgData, 'PNG', margin.left, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
                 
                 // Tambahkan halaman baru jika kontennya panjang
-                while (currentHeight < imgHeight) {
-                    addPageWithNumber(imgHeight - currentHeight);
-                    currentHeight += contentHeight;
+                while (heightLeft >= -pageHeight) {
+                    position = heightLeft - imgHeight + margin.top;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', margin.left, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                    page++;
                 }
                 
                 // Unduh PDF
@@ -961,3 +941,5 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
     </script>
 </body>
 </html>
+
+Aplikasi ini sekarang menghasilkan PDF dengan margin dan padding yang konsisten di setiap halaman, membuat tampilan lebih profesional dan mudah dibaca.
