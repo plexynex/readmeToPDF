@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -19,6 +18,11 @@ html
             --text-color: #1f2937;
             --success-color: #10b981;
             --warning-color: #f59e0b;
+            --header-bg: #4a6cf7;
+            --header-text: #ffffff;
+            --code-bg: #1f2937;
+            --code-text: #f9fafb;
+            --link-color: #3b82f6;
         }
         
         * {
@@ -45,14 +49,14 @@ html
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #4a6cf7 0%, #3b5be0 100%);
+            background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-color) 100%);
             border-radius: 12px;
-            color: white;
+            color: var(--header-text);
             box-shadow: 0 4px 12px rgba(79, 108, 247, 0.25);
         }
         
         h1 {
-            color: white;
+            color: var(--header-text);
             margin-bottom: 10px;
             font-size: 2.5rem;
         }
@@ -150,7 +154,7 @@ html
         }
         
         .markdown-preview pre {
-            background-color: #1f2937;
+            background-color: var(--code-bg);
             padding: 16px;
             border-radius: 8px;
             overflow-x: auto;
@@ -159,7 +163,7 @@ html
         
         .markdown-preview pre code {
             background-color: transparent;
-            color: #f9fafb;
+            color: var(--code-text);
             padding: 0;
         }
         
@@ -184,6 +188,15 @@ html
         
         .markdown-preview th {
             background-color: #f3f4f6;
+        }
+        
+        .markdown-preview a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        
+        .markdown-preview a:hover {
+            text-decoration: underline;
         }
         
         .buttons {
@@ -294,6 +307,70 @@ html
             font-size: 0.9rem;
         }
         
+        .color-picker {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-picker h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .color-option {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .color-option label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-input input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .color-input input[type="text"] {
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 100px;
+            font-family: monospace;
+        }
+        
+        .reset-colors {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: var(--warning-color);
+        }
+        
+        .reset-colors:hover {
+            background-color: #e58c08;
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -307,6 +384,10 @@ html
             button {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .color-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -336,7 +417,7 @@ html
     <div class="container">
         <header>
             <h1>Generator Tampilan README.md</h1>
-            <p class="description">Masukkan kode Markdown Anda, lihat pratinjau secara real-time, dan unduh sebagai PDF dengan satu klik</p>
+            <p class="description">Masukkan kode Markdown Anda, lihat pratinjau secara real-time, kustomisasi warna, dan unduh sebagai PDF dengan satu klik</p>
         </header>
         
         <div class="main-content">
@@ -355,8 +436,9 @@ Ini adalah contoh proyek untuk menunjukkan generator README. Aplikasi ini memung
 ## Fitur Utama
 - ✨ Editor Markdown dengan highlight sintaks
 - 👁️ Pratinjau real-time
+- 🎨 Kustomisasi warna tema
 - 📁 Ekspor ke PDF
-- 🎨 Tampilan yang responsif dan modern
+- 🎯 Tampilan yang responsif dan modern
 
 ## Instalasi
 ```bash
@@ -377,7 +459,8 @@ npm start
 1. Jalankan aplikasi
 2. Masukkan data Anda
 3. Lihat hasilnya di panel pratinjau
-4. Unduh sebagai PDF jika diperlukan
+4. Kustomisasi warna sesuai keinginan
+5. Unduh sebagai PDF jika diperlukan
 
 ## Kontribusi
 Silakan kirim pull request jika ingin berkontribusi. Pastikan untuk mengikuti pedoman kontribusi kami.
@@ -407,6 +490,49 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                     <!-- Pratinjau akan ditampilkan di sini -->
                 </div>
             </div>
+        </div>
+        
+        <div class="color-picker">
+            <h2>Kustomisasi Warna Tema</h2>
+            <div class="color-grid">
+                <div class="color-option">
+                    <label for="primary-color">Warna Primer</label>
+                    <div class="color-input">
+                        <input type="color" id="primary-color" value="#4a6cf7">
+                        <input type="text" id="primary-text" value="#4a6cf7">
+                    </div>
+                </div>
+                
+                <div class="color-option">
+                    <label for="header-bg">Warna Header</label>
+                    <div class="color-input">
+                        <input type="color" id="header-bg" value="#4a6cf7">
+                        <input type="text" id="header-text" value="#4a6cf7">
+                    </div>
+                </div>
+                
+                <div class="color-option">
+                    <label for="code-bg">Latarbelakang Kode</label>
+                    <div class="color-input">
+                        <input type="color" id="code-bg" value="#1f2937">
+                        <input type="text" id="code-text" value="#1f2937">
+                    </div>
+                </div>
+                
+                <div class="color-option">
+                    <label for="link-color">Warna Tautan</label>
+                    <div class="color-input">
+                        <input type="color" id="link-color" value="#3b82f6">
+                        <input type="text" id="link-text" value="#3b82f6">
+                    </div>
+                </div>
+            </div>
+            <button id="reset-colors" class="reset-colors">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Ke Default
+            </button>
         </div>
         
         <div class="buttons">
@@ -448,6 +574,17 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
         const clearEditorBtn = document.getElementById('clear-editor');
         const sampleDataBtn = document.getElementById('sample-data');
         const notification = document.getElementById('notification');
+        const resetColorsBtn = document.getElementById('reset-colors');
+        
+        // Elemen input warna
+        const primaryColorInput = document.getElementById('primary-color');
+        const primaryTextInput = document.getElementById('primary-text');
+        const headerBgInput = document.getElementById('header-bg');
+        const headerTextInput = document.getElementById('header-text');
+        const codeBgInput = document.getElementById('code-bg');
+        const codeTextInput = document.getElementById('code-text');
+        const linkColorInput = document.getElementById('link-color');
+        const linkTextInput = document.getElementById('link-text');
         
         // Konfigurasi marked
         marked.setOptions({
@@ -473,6 +610,57 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
         // Event listener untuk input perubahan
         markdownInput.addEventListener('input', renderMarkdown);
         
+        // Fungsi untuk mengupdate warna tema
+        function updateColors() {
+            document.documentElement.style.setProperty('--primary-color', primaryColorInput.value);
+            document.documentElement.style.setProperty('--header-bg', headerBgInput.value);
+            document.documentElement.style.setProperty('--code-bg', codeBgInput.value);
+            document.documentElement.style.setProperty('--code-text', codeTextInput.value);
+            document.documentElement.style.setProperty('--link-color', linkColorInput.value);
+            
+            // Update text inputs to match color inputs
+            primaryTextInput.value = primaryColorInput.value;
+            headerTextInput.value = headerBgInput.value;
+            codeTextInput.value = codeBgInput.value;
+            linkTextInput.value = linkColorInput.value;
+        }
+        
+        // Event listeners untuk input warna
+        primaryColorInput.addEventListener('input', updateColors);
+        headerBgInput.addEventListener('input', updateColors);
+        codeBgInput.addEventListener('input', updateColors);
+        codeTextInput.addEventListener('input', function() {
+            codeBgInput.value = this.value;
+            updateColors();
+        });
+        linkColorInput.addEventListener('input', updateColors);
+        
+        // Reset warna ke default
+        resetColorsBtn.addEventListener('click', function() {
+            primaryColorInput.value = '#4a6cf7';
+            headerBgInput.value = '#4a6cf7';
+            codeBgInput.value = '#1f2937';
+            codeTextInput.value = '#1f2937';
+            linkColorInput.value = '#3b82f6';
+            updateColors();
+        });
+        
+        // Sync text inputs with color inputs
+        primaryTextInput.addEventListener('input', function() {
+            primaryColorInput.value = this.value;
+            updateColors();
+        });
+        
+        headerTextInput.addEventListener('input', function() {
+            headerBgInput.value = this.value;
+            updateColors();
+        });
+        
+        linkTextInput.addEventListener('input', function() {
+            linkColorInput.value = this.value;
+            updateColors();
+        });
+        
         // Fungsi untuk menghasilkan PDF
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
@@ -480,11 +668,34 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             generatePdfBtn.disabled = true;
             
             try {
+                // Simpan warna asli
+                const originalColors = {
+                    primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                    headerBg: getComputedStyle(document.documentElement).getPropertyValue('--header-bg'),
+                    codeBg: getComputedStyle(document.documentElement).getPropertyValue('--code-bg'),
+                    codeText: getComputedStyle(document.documentElement).getPropertyValue('--code-text'),
+                    link: getComputedStyle(document.documentElement).getPropertyValue('--link-color')
+                };
+                
+                // Optimalkan warna untuk PDF
+                document.documentElement.style.setProperty('--primary-color', '#4a6cf7');
+                document.documentElement.style.setProperty('--header-bg', '#4a6cf7');
+                document.documentElement.style.setProperty('--code-bg', '#1f2937');
+                document.documentElement.style.setProperty('--code-text', '#f9fafb');
+                document.documentElement.style.setProperty('--link-color', '#3b82f6');
+                
+                // Render ulang dengan warna yang dioptimalkan
+                renderMarkdown();
+                
+                // Tunggu sebentar untuk render
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 // Menggunakan html2canvas untuk menangkap konten sebagai gambar
                 const canvas = await html2canvas(markdownPreview, {
                     scale: 2,
                     useCORS: true,
-                    logging: false
+                    logging: false,
+                    backgroundColor: '#ffffff'
                 });
                 
                 const imgData = canvas.toDataURL('image/png');
@@ -505,6 +716,16 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
+                
+                // Kembalikan warna asli
+                document.documentElement.style.setProperty('--primary-color', originalColors.primary);
+                document.documentElement.style.setProperty('--header-bg', originalColors.headerBg);
+                document.documentElement.style.setProperty('--code-bg', originalColors.codeBg);
+                document.documentElement.style.setProperty('--code-text', originalColors.codeText);
+                document.documentElement.style.setProperty('--link-color', originalColors.link);
+                
+                // Render ulang dengan warna asli
+                renderMarkdown();
                 
                 // Unduh PDF
                 pdf.save('README.pdf');
@@ -547,37 +768,37 @@ Instruksi ini akan membantu Anda mendapatkan salinan proyek dan menjalankannya d
 
 Apa yang perlu Anda instal untuk perangkat lunak:
 
-\\\`\\\`\\\`
+\`\`\`
 Berikan contoh
-\\\`\\\`\\\`
+\`\`\`
 
 ### Instalasi
 
 Langkah-langkah untuk menginstal:
 
 1. Clone repositori
-\\\`\\\`\\\`bash
+\`\`\`bash
 git clone https://github.com/username/repo.git
-\\\`\\\`\\\`
+\`\`\`
 
 2. Masuk ke direktori
-\\\`\\\`\\\`bash
+\`\`\`bash
 cd repo
-\\\`\\\`\\\`
+\`\`\`
 
 3. Install dependencies
-\\\`\\\`\\\`bash
+\`\`\`bash
 npm install
-\\\`\\\`\\\`
+\`\`\`
 
 ## Penggunaan
 
 Berikan contoh penggunaan:
 
-\\\`\\\`\\\`javascript
+\`\`\`javascript
 const contoh = require('contoh');
 contoh.hello();
-\\\`\\\`\\\`
+\`\`\`
 
 ## Berkontribusi
 
@@ -597,6 +818,11 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
         
         // Inisialisasi Highlight.js
         hljs.highlightAll();
+        
+        // Inisialisasi warna
+        updateColors();
     </script>
 </body>
 </html>
+
+Anda dapat menyimpan kode di atas sebagai file HTML (misalnya index.html) dan membukanya langsung di browser untuk mulai menggunakan aplikasi.
