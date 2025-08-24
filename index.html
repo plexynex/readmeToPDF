@@ -1,0 +1,602 @@
+html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator README.md ke PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #6b7280;
+            --bg-color: #f9fafb;
+            --border-color: #e5e7eb;
+            --text-color: #1f2937;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4a6cf7 0%, #3b5be0 100%);
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 108, 247, 0.25);
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .editor-section, .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        
+        .editor-section:hover, .preview-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .markdown-editor {
+            width: 100%;
+            height: 500px;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .markdown-editor:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 108, 247, 0.2);
+        }
+        
+        .markdown-preview {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            overflow-y: auto;
+            background: white;
+            min-height: 500px;
+        }
+        
+        .markdown-preview h1 {
+            color: var(--text-color);
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .markdown-preview h2 {
+            color: var(--primary-color);
+            margin-top: 1.5em;
+            padding-bottom: 5px;
+        }
+        
+        .markdown-preview code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+        
+        .markdown-preview pre {
+            background-color: #1f2937;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .markdown-preview pre code {
+            background-color: transparent;
+            color: #f9fafb;
+            padding: 0;
+        }
+        
+        .markdown-preview blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 16px;
+            margin-left: 0;
+            color: var(--secondary-color);
+        }
+        
+        .markdown-preview table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        
+        .markdown-preview th, .markdown-preview td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        .markdown-preview th {
+            background-color: #f3f4f6;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(79, 108, 247, 0.2);
+        }
+        
+        button:hover {
+            background-color: #3b5be0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 108, 247, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.secondary {
+            background-color: var(--secondary-color);
+            box-shadow: 0 4px 6px rgba(107, 114, 128, 0.2);
+        }
+        
+        button.secondary:hover {
+            background-color: #58616e;
+            box-shadow: 0 6px 12px rgba(107, 114, 128, 0.3);
+        }
+        
+        button.success {
+            background-color: var(--success-color);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+        
+        button.success:hover {
+            background-color: #0da271;
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Loader */
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Icon styles */
+        .icon {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Generator Tampilan README.md</h1>
+            <p class="description">Masukkan kode Markdown Anda, lihat pratinjau secara real-time, dan unduh sebagai PDF dengan satu klik</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="section-title">
+                    <span>Editor Markdown</span>
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Gunakan sintaks Markdown standar untuk pemformatan teks, kode, dan lainnya</span>
+                    </span>
+                </div>
+                <textarea id="markdown-input" class="markdown-editor" placeholder="Ketik kode Markdown Anda di sini..."># Contoh README.md
+
+## Deskripsi Proyek
+Ini adalah contoh proyek untuk menunjukkan generator README. Aplikasi ini memungkinkan Anda membuat dokumentasi proyek yang rapi dan profesional.
+
+## Fitur Utama
+- ✨ Editor Markdown dengan highlight sintaks
+- 👁️ Pratinjau real-time
+- 📁 Ekspor ke PDF
+- 🎨 Tampilan yang responsif dan modern
+
+## Instalasi
+```bash
+# Clone repositori ini
+git clone https://github.com/username/repo.git
+
+# Masuk ke direktori project
+cd repo
+
+# Install dependencies
+npm install
+
+# Jalankan aplikasi
+npm start
+```
+
+## Penggunaan
+1. Jalankan aplikasi
+2. Masukkan data Anda
+3. Lihat hasilnya di panel pratinjau
+4. Unduh sebagai PDF jika diperlukan
+
+## Kontribusi
+Silakan kirim pull request jika ingin berkontribusi. Pastikan untuk mengikuti pedoman kontribusi kami.
+
+## Lisensi
+Proyek ini dilisensikan di bawah [Lisensi MIT](https://opensource.org/licenses/MIT).
+
+## Kontak
+Jika Anda memiliki pertanyaan, silakan hubungi:
+- Nama: [Your Name]
+- Email: your.email@example.com
+- Twitter: [@yourusername](https://twitter.com/yourusername)
+
+---
+
+*Dibuat dengan ❤️ menggunakan Generator README.md ke PDF*</textarea>
+            </div>
+            
+            <div class="preview-section">
+                <div class="section-title">
+                    <span>Pratinjau README</span>
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Ini adalah tampilan bagaimana README Anda akan terlihat</span>
+                    </span>
+                </div>
+                <div id="markdown-preview" class="markdown-preview">
+                    <!-- Pratinjau akan ditampilkan di sini -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button id="generate-pdf" class="success">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Unduh sebagai PDF
+            </button>
+            <button id="clear-editor" class="secondary">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Bersihkan Editor
+            </button>
+            <button id="sample-data">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Data Contoh
+            </button>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        PDF berhasil diunduh!
+    </div>
+    
+    <footer>
+        <p>Dibuat dengan ❤️ | Generator README.md ke PDF &copy; 2023</p>
+    </footer>
+
+    <script>
+        // Inisialisasi
+        const { jsPDF } = window.jspdf;
+        const markdownInput = document.getElementById('markdown-input');
+        const markdownPreview = document.getElementById('markdown-preview');
+        const generatePdfBtn = document.getElementById('generate-pdf');
+        const clearEditorBtn = document.getElementById('clear-editor');
+        const sampleDataBtn = document.getElementById('sample-data');
+        const notification = document.getElementById('notification');
+        
+        // Konfigurasi marked
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            }
+        });
+        
+        // Fungsi untuk merender Markdown ke HTML
+        function renderMarkdown() {
+            const markdownText = markdownInput.value;
+            markdownPreview.innerHTML = marked.parse(markdownText);
+        }
+        
+        // Render awal
+        renderMarkdown();
+        
+        // Event listener untuk input perubahan
+        markdownInput.addEventListener('input', renderMarkdown);
+        
+        // Fungsi untuk menghasilkan PDF
+        generatePdfBtn.addEventListener('click', async () => {
+            const originalText = generatePdfBtn.innerHTML;
+            generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
+            generatePdfBtn.disabled = true;
+            
+            try {
+                // Menggunakan html2canvas untuk menangkap konten sebagai gambar
+                const canvas = await html2canvas(markdownPreview, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+                
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 190; // Lebar gambar dalam mm (A4: 210mm width)
+                const pageHeight = 297; // Tinggi halaman A4 dalam mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 10;
+                
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                // Tambahkan halaman baru jika kontennya panjang
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight + 10;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Unduh PDF
+                pdf.save('README.pdf');
+                
+                // Tampilkan notifikasi
+                notification.textContent = 'PDF berhasil diunduh!';
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Terjadi kesalahan saat membuat PDF. Silakan coba lagi.');
+            } finally {
+                generatePdfBtn.innerHTML = originalText;
+                generatePdfBtn.disabled = false;
+            }
+        });
+        
+        // Bersihkan editor
+        clearEditorBtn.addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin menghapus semua konten?')) {
+                markdownInput.value = '';
+                renderMarkdown();
+            }
+        });
+        
+        // Tambahkan data contoh
+        sampleDataBtn.addEventListener('click', () => {
+            markdownInput.value = `# Judul Proyek
+
+Satu paragraf deskripsi proyek yang menjelaskan tujuan utama proyek.
+
+## Memulai
+
+Instruksi ini akan membantu Anda mendapatkan salinan proyek dan menjalankannya di mesin lokal Anda untuk pengembangan dan pengujian.
+
+### Prasyarat
+
+Apa yang perlu Anda instal untuk perangkat lunak:
+
+\\\`\\\`\\\`
+Berikan contoh
+\\\`\\\`\\\`
+
+### Instalasi
+
+Langkah-langkah untuk menginstal:
+
+1. Clone repositori
+\\\`\\\`\\\`bash
+git clone https://github.com/username/repo.git
+\\\`\\\`\\\`
+
+2. Masuk ke direktori
+\\\`\\\`\\\`bash
+cd repo
+\\\`\\\`\\\`
+
+3. Install dependencies
+\\\`\\\`\\\`bash
+npm install
+\\\`\\\`\\\`
+
+## Penggunaan
+
+Berikan contoh penggunaan:
+
+\\\`\\\`\\\`javascript
+const contoh = require('contoh');
+contoh.hello();
+\\\`\\\`\\\`
+
+## Berkontribusi
+
+Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk detail kode etik kami, dan proses pengajuan pull request.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.md) untuk detailnya.
+
+## Ucapan Terima Kasih
+
+- Hat tip kepada siapa pun yang kodenya digunakan
+- Inspirasi
+- dll.`;
+            renderMarkdown();
+        });
+        
+        // Inisialisasi Highlight.js
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
