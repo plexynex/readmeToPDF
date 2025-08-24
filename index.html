@@ -35,19 +35,19 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 15px;
+            padding: 20px;
             line-height: 1.6;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 15px;
+            padding: 20px;
         }
         
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             padding: 20px;
             background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-color) 100%);
             border-radius: 12px;
@@ -58,13 +58,13 @@
         h1 {
             color: var(--header-text);
             margin-bottom: 10px;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
         }
         
         .description {
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
@@ -93,7 +93,7 @@
         }
         
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 15px;
             color: var(--primary-color);
             display: flex;
@@ -105,8 +105,8 @@
         
         .markdown-editor {
             width: 100%;
-            height: 450px;
-            padding: 15px;
+            height: 500px;
+            padding: 20px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             resize: vertical;
@@ -124,12 +124,12 @@
         
         .markdown-preview {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             overflow-y: auto;
             background: white;
-            min-height: 450px;
+            min-height: 500px;
         }
         
         .markdown-preview h1 {
@@ -208,7 +208,7 @@
         }
         
         button {
-            padding: 12px 20px;
+            padding: 12px 25px;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -324,7 +324,7 @@
         .color-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
         
         .color-option {
@@ -371,56 +371,9 @@
             background-color: #e58c08;
         }
         
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .container {
-                padding: 15px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .main-content {
-                gap: 15px;
-            }
-            
-            .editor-section, .preview-section {
-                padding: 15px;
-            }
-            
-            .markdown-editor, .markdown-preview {
-                height: 400px;
-            }
-        }
-        
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 15px;
-                margin-bottom: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
             .main-content {
                 flex-direction: column;
-            }
-            
-            .editor-section, .preview-section {
-                min-width: 100%;
-            }
-            
-            .markdown-editor, .markdown-preview {
-                height: 350px;
-                font-size: 16px; /* Better for mobile */
             }
             
             .buttons {
@@ -436,42 +389,13 @@
             .color-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .color-picker {
-                padding: 15px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            .section-title {
-                font-size: 1.1rem;
-            }
-            
-            .markdown-editor, .markdown-preview {
-                height: 300px;
-                padding: 12px;
-            }
-            
-            .color-input {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            
-            .color-input input[type="text"] {
-                width: 100%;
-            }
         }
         
         /* Loader */
         .loader {
             display: none;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -490,7 +414,7 @@
         
         /* PDF specific styles */
         .pdf-mode {
-            padding: 30px;
+            padding: 40px;
             background: white;
             box-sizing: border-box;
             width: 210mm; /* A4 width */
@@ -506,15 +430,12 @@
         .pdf-mode h1 {
             font-size: 28px;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
         }
         
         .pdf-mode h2 {
             font-size: 22px;
-            margin-top: 25px;
+            margin-top: 30px;
             margin-bottom: 15px;
-            padding-bottom: 5px;
         }
         
         .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
@@ -525,20 +446,11 @@
         .pdf-mode pre {
             margin: 20px 0;
             page-break-inside: avoid;
-            border-radius: 8px;
-            padding: 15px;
         }
         
         .pdf-mode table {
             page-break-inside: avoid;
             margin: 20px 0;
-            width: 100%;
-        }
-        
-        .pdf-mode blockquote {
-            margin: 20px 0;
-            padding-left: 20px;
-            border-left-width: 4px;
         }
     </style>
 </head>
@@ -794,7 +706,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             updateColors();
         });
         
-        // Fungsi untuk menghasilkan PDF dengan padding di setiap halaman
+        // Fungsi untuk menghasilkan PDF
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
             generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
@@ -812,7 +724,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const style = document.createElement('style');
                 style.textContent = `
                     .pdf-mode { 
-                        padding: 30px; 
+                        padding: 40px; 
                         background: white; 
                         box-sizing: border-box; 
                         width: 210mm; 
@@ -821,19 +733,18 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--text-color')};
                         font-size: 28px;
                         margin-bottom: 20px;
-                        padding-bottom: 15px;
                         border-bottom: 2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--border-color')};
                     }
                     .pdf-mode h2 { 
                         color: ${primaryColorInput.value};
                         font-size: 22px;
-                        margin-top: 25px;
+                        margin-top: 30px;
                         margin-bottom: 15px;
                     }
                     .pdf-mode pre { 
                         background: ${codeBgInput.value};
                         color: ${codeTextInput.value};
-                        padding: 15px;
+                        padding: 16px;
                         border-radius: 8px;
                         margin: 20px 0;
                         page-break-inside: avoid;
@@ -844,11 +755,6 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                     .pdf-mode blockquote { 
                         border-left: 4px solid ${primaryColorInput.value};
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--secondary-color')};
-                        padding-left: 20px;
-                        margin: 20px 0;
-                    }
-                    .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
-                        margin-bottom: 15px;
                     }
                 `;
                 
@@ -872,29 +778,23 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Padding untuk setiap halaman (20mm)
-                const padding = 20;
-                const contentWidth = pageWidth - (padding * 2);
-                const contentHeight = pageHeight - (padding * 2);
-                
-                const imgWidth = contentWidth;
+                const imgWidth = pageWidth - 40; // Padding 20mm di kiri dan kanan
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
                 let heightLeft = imgHeight;
-                let position = padding; // Padding atas
+                let position = 20; // Padding atas 20mm
                 let page = 1;
                 
                 // Halaman pertama
-                pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
-                heightLeft -= contentHeight;
+                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
                 
                 // Tambahkan halaman baru jika kontennya panjang
-                while (heightLeft > 0) {
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
                     pdf.addPage();
-                    position = -contentHeight + heightLeft + padding;
-                    pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
-                    heightLeft -= contentHeight;
+                    pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
                     page++;
                 }
                 
