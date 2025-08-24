@@ -35,20 +35,20 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 16px;
+            padding: 15px;
             line-height: 1.6;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 16px;
+            padding: 15px;
         }
         
         header {
             text-align: center;
-            margin-bottom: 24px;
-            padding: 24px 16px;
+            margin-bottom: 25px;
+            padding: 20px;
             background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-color) 100%);
             border-radius: 12px;
             color: var(--header-text);
@@ -57,14 +57,14 @@
         
         h1 {
             color: var(--header-text);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 2.2rem;
         }
         
         .description {
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 16px;
-            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-size: 1rem;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
@@ -72,8 +72,8 @@
         
         .main-content {
             display: flex;
-            flex-wrap: wrap;
             gap: 20px;
+            flex-wrap: wrap;
         }
         
         .editor-section, .preview-section {
@@ -85,29 +85,35 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        
+        .editor-section:hover, .preview-section:hover {
+            transform: translateY(-5px);
         }
         
         .section-title {
-            font-size: 1.3rem;
-            margin-bottom: 16px;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
             color: var(--primary-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 2px solid var(--border-color);
         }
         
         .markdown-editor {
             width: 100%;
-            height: 500px;
-            padding: 16px;
+            height: 450px;
+            padding: 15px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             resize: vertical;
             font-family: 'Fira Code', monospace;
             line-height: 1.6;
             font-size: 14px;
+            transition: border-color 0.3s;
         }
         
         .markdown-editor:focus {
@@ -118,25 +124,24 @@
         
         .markdown-preview {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             overflow-y: auto;
             background: white;
-            min-height: 500px;
+            min-height: 450px;
         }
         
         .markdown-preview h1 {
             color: var(--text-color);
             margin-top: 0;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 2px solid var(--border-color);
         }
         
         .markdown-preview h2 {
             color: var(--primary-color);
             margin-top: 1.5em;
-            margin-bottom: 0.8em;
             padding-bottom: 5px;
         }
         
@@ -164,10 +169,9 @@
         
         .markdown-preview blockquote {
             border-left: 4px solid var(--primary-color);
-            padding: 8px 16px;
-            margin: 16px 0;
+            padding-left: 16px;
+            margin-left: 0;
             color: var(--secondary-color);
-            background-color: #f9fafb;
         }
         
         .markdown-preview table {
@@ -197,10 +201,10 @@
         
         .buttons {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 24px;
+            gap: 15px;
+            margin-top: 30px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         button {
@@ -224,6 +228,10 @@
             box-shadow: 0 6px 12px rgba(79, 108, 247, 0.3);
         }
         
+        button:active {
+            transform: translateY(0);
+        }
+        
         button.secondary {
             background-color: var(--secondary-color);
             box-shadow: 0 4px 6px rgba(107, 114, 128, 0.2);
@@ -244,24 +252,79 @@
             box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
         }
         
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
         .color-picker {
             background: white;
             border-radius: 12px;
             padding: 20px;
-            margin-top: 24px;
+            margin-top: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .color-picker h2 {
             color: var(--primary-color);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             text-align: center;
         }
         
         .color-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            gap: 15px;
         }
         
         .color-option {
@@ -308,30 +371,100 @@
             background-color: #e58c08;
         }
         
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background-color: var(--success-color);
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
+            }
         }
         
-        .notification.show {
-            transform: translateX(0);
+        @media (max-width: 992px) {
+            .main-content {
+                gap: 15px;
+            }
+            
+            .editor-section, .preview-section {
+                padding: 15px;
+            }
+            
+            .markdown-editor, .markdown-preview {
+                height: 400px;
+            }
         }
         
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: var(--secondary-color);
-            font-size: 0.9rem;
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .editor-section, .preview-section {
+                min-width: 100%;
+            }
+            
+            .markdown-editor, .markdown-preview {
+                height: 350px;
+                font-size: 16px; /* Better for mobile */
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .color-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-picker {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .markdown-editor, .markdown-preview {
+                height: 300px;
+                padding: 12px;
+            }
+            
+            .color-input {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .color-input input[type="text"] {
+                width: 100%;
+            }
         }
         
         /* Loader */
@@ -356,144 +489,56 @@
         }
         
         /* PDF specific styles */
-        .pdf-page {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 25mm;
+        .pdf-mode {
+            padding: 30px;
             background: white;
             box-sizing: border-box;
-            margin: 0 auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
         }
         
-        .pdf-content {
-            width: 100%;
-            height: 100%;
+        .pdf-mode .markdown-preview {
+            border: none;
+            padding: 0;
+            min-height: auto;
         }
         
-        .pdf-content h1 {
-            color: #1f2937;
+        .pdf-mode h1 {
             font-size: 28px;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
         
-        .pdf-content h2 {
-            color: var(--primary-color);
+        .pdf-mode h2 {
             font-size: 22px;
             margin-top: 25px;
             margin-bottom: 15px;
+            padding-bottom: 5px;
         }
         
-        .pdf-content p, .pdf-content ul, .pdf-content ol {
+        .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
             margin-bottom: 15px;
             line-height: 1.6;
         }
         
-        .pdf-content pre {
+        .pdf-mode pre {
             margin: 20px 0;
             page-break-inside: avoid;
             border-radius: 8px;
+            padding: 15px;
         }
         
-        .pdf-content table {
+        .pdf-mode table {
             page-break-inside: avoid;
             margin: 20px 0;
             width: 100%;
         }
         
-        .pdf-content blockquote {
-            border-left: 4px solid var(--primary-color);
-            padding: 10px 20px;
+        .pdf-mode blockquote {
             margin: 20px 0;
-            background-color: #f9fafb;
-            border-radius: 4px;
-        }
-        
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            body {
-                padding: 12px;
-            }
-            
-            .container {
-                padding: 12px;
-            }
-            
-            header {
-                padding: 20px 12px;
-                margin-bottom: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .description {
-                font-size: 1rem;
-            }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .editor-section, .preview-section {
-                min-width: 100%;
-            }
-            
-            .markdown-editor, .markdown-preview {
-                height: 400px;
-            }
-            
-            .buttons {
-                flex-direction: column;
-            }
-            
-            button {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .color-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .pdf-page {
-                padding: 15mm;
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            .section-title {
-                font-size: 1.1rem;
-            }
-            
-            .markdown-editor, .markdown-preview {
-                height: 350px;
-                padding: 12px;
-            }
-            
-            .color-picker {
-                padding: 16px;
-            }
-            
-            .pdf-page {
-                padding: 10mm;
-            }
-            
-            .pdf-content h1 {
-                font-size: 24px;
-            }
-            
-            .pdf-content h2 {
-                font-size: 20px;
-            }
+            padding-left: 20px;
+            border-left-width: 4px;
         }
     </style>
 </head>
@@ -508,6 +553,9 @@
             <div class="editor-section">
                 <div class="section-title">
                     <span>Editor Markdown</span>
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Gunakan sintaks Markdown standar untuk pemformatan teks, kode, dan lainnya</span>
+                    </span>
                 </div>
                 <textarea id="markdown-input" class="markdown-editor" placeholder="Ketik kode Markdown Anda di sini..."># Contoh README.md
 
@@ -563,6 +611,9 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             <div class="preview-section">
                 <div class="section-title">
                     <span>Pratinjau README</span>
+                    <span class="tooltip">ℹ️
+                        <span class="tooltiptext">Ini adalah tampilan bagaimana README Anda akan terlihat</span>
+                    </span>
                 </div>
                 <div id="markdown-preview" class="markdown-preview">
                     <!-- Pratinjau akan ditampilkan di sini -->
@@ -743,7 +794,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             updateColors();
         });
         
-        // Fungsi untuk menghasilkan PDF dengan padding dan margin yang tepat
+        // Fungsi untuk menghasilkan PDF dengan padding di setiap halaman
         generatePdfBtn.addEventListener('click', async () => {
             const originalText = generatePdfBtn.innerHTML;
             generatePdfBtn.innerHTML = '<div class="loader"></div> Membuat PDF...';
@@ -752,10 +803,7 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
             try {
                 // Buat elemen khusus untuk PDF dengan padding
                 const pdfContent = document.createElement('div');
-                pdfContent.className = 'pdf-page';
-                
-                const content = document.createElement('div');
-                content.className = 'pdf-content';
+                pdfContent.className = 'pdf-mode';
                 
                 // Salinan konten pratinjau
                 const previewClone = markdownPreview.cloneNode(true);
@@ -763,61 +811,49 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 // Terapkan warna yang dipilih ke konten PDF
                 const style = document.createElement('style');
                 style.textContent = `
-                    .pdf-content h1 { 
+                    .pdf-mode { 
+                        padding: 30px; 
+                        background: white; 
+                        box-sizing: border-box; 
+                        width: 210mm; 
+                    }
+                    .pdf-mode h1 { 
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--text-color')};
                         font-size: 28px;
                         margin-bottom: 20px;
-                        padding-bottom: 10px;
+                        padding-bottom: 15px;
                         border-bottom: 2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--border-color')};
                     }
-                    .pdf-content h2 { 
+                    .pdf-mode h2 { 
                         color: ${primaryColorInput.value};
                         font-size: 22px;
                         margin-top: 25px;
                         margin-bottom: 15px;
                     }
-                    .pdf-content pre { 
+                    .pdf-mode pre { 
                         background: ${codeBgInput.value};
                         color: ${codeTextInput.value};
-                        padding: 16px;
+                        padding: 15px;
                         border-radius: 8px;
                         margin: 20px 0;
                         page-break-inside: avoid;
                     }
-                    .pdf-content a { 
+                    .pdf-mode a { 
                         color: ${linkColorInput.value};
                     }
-                    .pdf-content blockquote { 
+                    .pdf-mode blockquote { 
                         border-left: 4px solid ${primaryColorInput.value};
                         color: ${getComputedStyle(document.documentElement).getPropertyValue('--secondary-color')};
-                        padding: 10px 20px;
+                        padding-left: 20px;
                         margin: 20px 0;
-                        background-color: #f9fafb;
                     }
-                    .pdf-content code:not(pre code) {
-                        background-color: #f3f4f6;
-                        padding: 2px 6px;
-                        border-radius: 4px;
-                    }
-                    .pdf-content table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin: 20px 0;
-                        page-break-inside: avoid;
-                    }
-                    .pdf-content th, .pdf-content td {
-                        border: 1px solid ${getComputedStyle(document.documentElement).getPropertyValue('--border-color')};
-                        padding: 8px 12px;
-                        text-align: left;
-                    }
-                    .pdf-content th {
-                        background-color: #f3f4f6;
+                    .pdf-mode p, .pdf-mode ul, .pdf-mode ol {
+                        margin-bottom: 15px;
                     }
                 `;
                 
-                content.appendChild(previewClone);
                 pdfContent.appendChild(style);
-                pdfContent.appendChild(content);
+                pdfContent.appendChild(previewClone);
                 pdfContainer.innerHTML = '';
                 pdfContainer.appendChild(pdfContent);
                 
@@ -837,24 +873,29 @@ Jika Anda memiliki pertanyaan, silakan hubungi:
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 
-                // Hitung dimensi gambar dengan padding
-                const padding = 20; // 20mm padding
+                // Padding untuk setiap halaman (20mm)
+                const padding = 20;
                 const contentWidth = pageWidth - (padding * 2);
-                const contentHeight = (canvas.height * contentWidth) / canvas.width;
+                const contentHeight = pageHeight - (padding * 2);
                 
-                let heightLeft = contentHeight;
+                const imgWidth = contentWidth;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                let heightLeft = imgHeight;
                 let position = padding; // Padding atas
+                let page = 1;
                 
                 // Halaman pertama
-                pdf.addImage(imgData, 'PNG', padding, position, contentWidth, contentHeight);
-                heightLeft -= pageHeight;
+                pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
+                heightLeft -= contentHeight;
                 
                 // Tambahkan halaman baru jika kontennya panjang
-                while (heightLeft >= 0) {
+                while (heightLeft > 0) {
                     pdf.addPage();
-                    position = -heightLeft + padding;
-                    pdf.addImage(imgData, 'PNG', padding, position, contentWidth, contentHeight);
-                    heightLeft -= pageHeight;
+                    position = -contentHeight + heightLeft + padding;
+                    pdf.addImage(imgData, 'PNG', padding, position, imgWidth, imgHeight);
+                    heightLeft -= contentHeight;
+                    page++;
                 }
                 
                 // Unduh PDF
@@ -954,3 +995,5 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
     </script>
 </body>
 </html>
+
+Aplikasi ini sekarang benar-benar responsif di semua perangkat dan menghasilkan PDF dengan padding yang konsisten di setiap halaman.
